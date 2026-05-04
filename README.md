@@ -74,7 +74,7 @@ Note: These Llama adapters must be merged with the base model, which is gated an
 
 ## Model Licenses and Usage
 
-Meta Llama 3 is licensed under the [Meta Llama 3 Community License](https://ai.meta.com/llama/license/). Use of this model requires acceptance of Meta’s terms and conditions. The license may include restrictions on certain types of commercial usage.  
+Meta Llama 3 is licensed under the [Meta Llama 3 Community License](https://www.llama.com/llama3/license/). Use of this model requires acceptance of Meta’s terms and conditions. The license may include restrictions on certain types of commercial usage.  
 
 [Bio_ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT) is based on BERT and is released under the Apache 2.0 License. This license permits both academic and commercial use, as well as modification and redistribution. Users are required to include proper attribution and retain the license notice when using or distributing the model.   
 
