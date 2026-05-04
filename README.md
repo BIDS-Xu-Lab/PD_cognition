@@ -36,6 +36,7 @@ pip install -r requirements.txt
 ## Instruction Tuning
 To instruction tune the Llama model from scratch, you will have to specify your huggingface token in train.py under the Llama directory, and run it by:
 ```bash
+cd Meta-Llama-3
 ### set CUDA_VISIBLE_DEVICES to multiple GPU for multi-GPU training
 CUDA_VISIBLE_DEVICES=0,1 accelerate launch train.py
 ```
@@ -43,7 +44,14 @@ CUDA_VISIBLE_DEVICES=0,1 accelerate launch train.py
 ## Inference
 For Llama inference, you will have to acquire model weights, and then specify the model directory in inference.py under the corresponding directory. You can run it by:
 ```bash
+cd Meta-Llama-3
 python inference.py
+```
+
+## Evalution
+You can use this command to evaluate both Llama and BERT outputs post inference after specifying appropriate paths:
+```bash
+python evaluation.py
 ```
 
 ## Citation
