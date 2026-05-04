@@ -64,7 +64,7 @@ Note: These Llama adapters must be merged with the base model, which is gated an
 
 ## Citation
 ```bibtex
-@article{khanna2024cognitive,
+@article{khanna2025cognitive,
   title={Toward Automated Cognitive Assessment in Parkinson’s Disease Using Pretrained Language Models},
   author={Khanna, Varada and Bhatt, Nilay and Shin, Ikgyu and Rosso, Mattia and Tinaz, Sule and Ren, Yang and Xu, Hua and Keloth, Vipina K},
   journal={arXiv preprint arXiv:2511.08806},
