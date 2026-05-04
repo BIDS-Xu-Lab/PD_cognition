@@ -54,6 +54,14 @@ You can use this command to evaluate both Llama and BERT outputs post inference 
 python evaluation.py
 ```
 
+## Model Availability
+
+BioClinicalBERT spaCy model: https://huggingface.co/nilaybhatt/PD_cognition_BioclinBERT_finetuned
+
+Llama 3 fine tuned model adapters: https://huggingface.co/nilaybhatt/PD_cognition_Llama_finetuned
+
+Note: These Llama adapters need to be merged with the base model, which is gated and requires a lincense to access.
+
 ## Citation
 ```bibtex
 @article{khanna2024cognitive,
@@ -73,7 +81,6 @@ Meta Llama 3 is licensed under the [Meta Llama 3 Community License](https://ai.m
 GPT-4o mini is not open-source and is accessible only via the OpenAI API. Model weights are not publicly available and cannot be redistributed. All usage must comply with OpenAI’s Terms of Use. Clicl here for the [usage policies](https://platform.openai.com/docs/usage-policies)  
 
 ## Important Notes
-- This repository does not distribute pretrained model weights
 - Users must download or access models independently:
   - Llama 3 via Hugging Face (with approval)
   - Bio_ClinicalBERT via Hugging Face
