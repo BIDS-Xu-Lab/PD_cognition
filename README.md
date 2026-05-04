@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ```
 
 ## Instruction Tuning
-To instruction tune the Llama model from scratch, you will have to specify your huggingface token in train.py under the Llama directory, and run it by:
+To instruction tune the Llama model from scratch, you will have to specify your Hugging Face token in train.py under the Llama directory, and run it using:
 ```bash
 cd Meta-Llama-3
 ### set CUDA_VISIBLE_DEVICES to multiple GPU for multi-GPU training
@@ -42,13 +42,13 @@ CUDA_VISIBLE_DEVICES=0,1 accelerate launch train.py
 ```
 
 ## Inference
-For Llama inference, you will have to acquire model weights, and then specify the model directory in inference.py under the corresponding directory. You can run it by:
+For Llama inference, you will have to acquire model weights, and then specify the model directory in inference.py under the corresponding directory. You can run it using:
 ```bash
 cd Meta-Llama-3
 python inference.py
 ```
 
-## Evalution
+## Evaluation
 You can use this command to evaluate both Llama and BERT outputs post inference after specifying appropriate paths:
 ```bash
 python evaluation.py
@@ -60,7 +60,7 @@ BioClinicalBERT spaCy model: https://huggingface.co/nilaybhatt/PD_cognition_Bioc
 
 Llama 3 fine tuned model adapters: https://huggingface.co/nilaybhatt/PD_cognition_Llama_finetuned
 
-Note: These Llama adapters need to be merged with the base model, which is gated and requires a license to access.
+Note: These Llama adapters must be merged with the base model, which is gated and requires a license to access, to run inference.
 
 ## Citation
 ```bibtex
