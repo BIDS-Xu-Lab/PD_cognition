@@ -60,7 +60,7 @@ BioClinicalBERT spaCy model: https://huggingface.co/nilaybhatt/PD_cognition_Bioc
 
 Llama 3 fine tuned model adapters: https://huggingface.co/nilaybhatt/PD_cognition_Llama_finetuned
 
-Note: These Llama adapters need to be merged with the base model, which is gated and requires a lincense to access.
+Note: These Llama adapters need to be merged with the base model, which is gated and requires a license to access.
 
 ## Citation
 ```bibtex
