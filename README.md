@@ -76,7 +76,7 @@ Note: These Llama adapters need to be merged with the base model, which is gated
 
 Meta Llama 3 is licensed under the [Meta Llama 3 Community License](https://ai.meta.com/llama/license/). Use of this model requires acceptance of Meta’s terms and conditions. The license may include restrictions on certain types of commercial usage.  
 
-[Bio_ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT) is based on BERT (Google) and is released under the Apache 2.0 License. This license permits both academic and commercial use, as well as modification and redistribution. Users are required to include proper attribution and retain the license notice when using or distributing the model.   
+[Bio_ClinicalBERT](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT) is based on BERT and is released under the Apache 2.0 License. This license permits both academic and commercial use, as well as modification and redistribution. Users are required to include proper attribution and retain the license notice when using or distributing the model.   
 
 GPT-4o mini is not open-source and is accessible only via the OpenAI API. Model weights are not publicly available and cannot be redistributed. All usage must comply with OpenAI’s Terms of Use. Click here for the [usage policies](https://platform.openai.com/docs/usage-policies).  
 
