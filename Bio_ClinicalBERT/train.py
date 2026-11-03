@@ -1,5 +1,6 @@
 import os
 import csv
+import sys
 import json
 import re
 import random
@@ -31,7 +32,6 @@ SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 1337
 DATA_DIR = Path("path/to/data/directory")
 TRAIN_CSV = DATA_DIR / "train.csv"
 DEV_CSV   = DATA_DIR / "dev.csv"
-OUTDIR    = Path("output")
 OUTDIR    = Path("output") / f"seed_{SEED}"   # separate output folder per seed
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
