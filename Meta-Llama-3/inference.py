@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import glob
 import torch
 import pandas as pd
 from tqdm import tqdm
@@ -12,17 +13,21 @@ from transformers import (
 from peft import PeftModel
 
 base_model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
-adapters_root = "/path/to/llama/lora/adapters/stored/in/training"
+adapters_root = "/path/to/llama/lora/adapters/stored/in/training"   # same as output_root in train.py
 test_csv_path = "path/to/test/csv"
 output_root = "path/to/output/dir"
 
-if len(sys.argv) != 2:
-    raise SystemExit("Usage: python inference_new.py <epoch_num>")
+# Seed of the trained model to run. Must match the seed used in train.py.
+# Seeds used: 1337, 42, 7, 123, 2024
+# Usage: python inference.py <epoch_num> <seed>   (e.g. python inference.py 10 1337)
+if len(sys.argv) != 3:
+    raise SystemExit("Usage: python inference.py <epoch_num> <seed>")
 
 try:
     epoch_num = int(sys.argv[1])
+    seed = int(sys.argv[2])
 except ValueError:
-    raise SystemExit("Error: <epoch_num> must be an integer, e.g. 1")
+    raise SystemExit("Error: <epoch_num> and <seed> must be integers, e.g. 10 1337")
 
 if epoch_num < 1 or epoch_num > 10:
     raise SystemExit("Error: <epoch_num> must be between 1 and 10")
@@ -35,13 +40,23 @@ token = os.environ.get("HF_TOKEN")
 if not token:
     raise EnvironmentError("HF_TOKEN is not set in the environment.")
 
-adapter_dir = os.path.join(adapters_root, f"epoch_{epoch_num}")
+seed_adapters_dir = os.path.join(adapters_root, f"seed_{seed}")
+adapter_dir = os.path.join(seed_adapters_dir, f"epoch_{epoch_num}")
 
+# If there is no epoch_N folder, use the N-th checkpoint saved by train.py
+# (one checkpoint-<step> folder is saved per epoch).
 if not os.path.isdir(adapter_dir):
-    raise FileNotFoundError(f"Adapter directory not found: {adapter_dir}")
+    ckpts = sorted(glob.glob(os.path.join(seed_adapters_dir, "checkpoint-*")),
+                   key=lambda p: int(p.rsplit("-", 1)[-1]))
+    if len(ckpts) >= epoch_num:
+        adapter_dir = ckpts[epoch_num - 1]
+    else:
+        raise FileNotFoundError(
+            f"Adapter not found: no epoch_{epoch_num} folder and only {len(ckpts)} "
+            f"checkpoint-* folders in {seed_adapters_dir}"
+        )
 
-
-epoch_output_dir = os.path.join(output_root, f"epoch_{epoch_num}")
+epoch_output_dir = os.path.join(output_root, f"seed_{seed}", f"epoch_{epoch_num}")
 raw_output_dir = os.path.join(epoch_output_dir, "raw_outputs")
 combined_output_csv = os.path.join(epoch_output_dir, "all_outputs.csv")
 
@@ -194,11 +209,12 @@ def generate_batch(model, tokenizer, prompts):
             eos_token_id=tokenizer.eos_token_id,
         )
 
+    # With left padding every prompt in the batch occupies the same padded
+    # length, so the generated tokens always start right after it.
+    prompt_len = inputs["input_ids"].shape[1]
     generated_texts = []
-    input_lengths = inputs["attention_mask"].sum(dim=1).tolist()
-
-    for i, out_ids in enumerate(outputs):
-        gen_ids = out_ids[input_lengths[i]:]
+    for out_ids in outputs:
+        gen_ids = out_ids[prompt_len:]
         gen_text = tokenizer.decode(gen_ids, skip_special_tokens=True)
         generated_texts.append(gen_text)
 
@@ -211,7 +227,7 @@ if "unprocessed" not in df.columns:
     raise ValueError("Expected column 'unprocessed' in the input CSV.")
 
 # Load tokenizer + model
-print(f"Running inference for epoch_{epoch_num}")
+print(f"Running inference for seed_{seed} epoch_{epoch_num}")
 print(f"Adapter dir: {adapter_dir}")
 print(f"Output dir : {epoch_output_dir}")
 
@@ -235,7 +251,7 @@ base_model = AutoModelForCausalLM.from_pretrained(
     base_model_name,
     torch_dtype=torch.bfloat16,
     quantization_config=bnb_config,
-    cache_dir="/home/nb752/palmer_scratch/cogn_ex/huggingface_models/",
+    cache_dir="path/to/cache/dir",
     token=token,
     device_map="auto",
 )
@@ -268,7 +284,7 @@ all_rows = []
 
 print(f"\nRunning inference on {len(df)} samples...")
 
-for start in tqdm(range(0, len(df), batch_size), desc=f"epoch_{epoch_num}"):
+for start in tqdm(range(0, len(df), batch_size), desc=f"seed_{seed} epoch_{epoch_num}"):
     batch_df = df.iloc[start:start + batch_size]
 
     prompts = []
@@ -300,6 +316,7 @@ for start in tqdm(range(0, len(df), batch_size), desc=f"epoch_{epoch_num}"):
             "generated_output": cleaned,
             "raw_model_output": gen.strip(),
             "epoch": epoch_num,
+            "seed": seed,
         })
 
 combined_df = pd.DataFrame(all_rows)
