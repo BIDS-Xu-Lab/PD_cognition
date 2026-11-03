@@ -1,10 +1,20 @@
 import os
 import re
 import pandas as pd
+import argparse
 
-GROUND_TRUTH_CSV = "path/to/test.csv"
-PREDICTIONS_CSV  = "path/to/model/specific/all_outputs.csv"
-EVAL_OUTPUT_DIR  = "path/for/eval/outputs"
+# Usage: python evaluation.py --gt <test.csv> --pred <all_outputs.csv> --out <eval output dir>
+# For the multi-seed results, run once per seed (1337, 42, 7, 123, 2024), e.g.
+#   --pred results/seed_42/epoch_10/all_outputs.csv --out eval/seed_42
+parser = argparse.ArgumentParser()
+parser.add_argument("--gt",   default="path/to/test.csv")
+parser.add_argument("--pred", default="path/to/model/specific/all_outputs.csv")
+parser.add_argument("--out",  default="path/for/eval/outputs")
+args = parser.parse_args()
+
+GROUND_TRUTH_CSV = args.gt
+PREDICTIONS_CSV  = args.pred
+EVAL_OUTPUT_DIR  = args.out
 
 os.makedirs(EVAL_OUTPUT_DIR, exist_ok=True)
 
