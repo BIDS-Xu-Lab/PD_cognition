@@ -1,10 +1,12 @@
 from datasets import load_dataset
 import torch, os
+import argparse
 from transformers import (
     AutoModelForCausalLM,
     BitsAndBytesConfig,
     AutoTokenizer,
     TrainerCallback,
+    set_seed,
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer, SFTConfig
@@ -14,13 +16,23 @@ from utils import find_all_linear_names, print_trainable_parameters
 os.environ.pop("ACCELERATE_DISABLE_RICH", None)
 os.environ["TRANSFORMERS_VERBOSITY"] = "info"
 
+# Random seed. To reproduce our multi-seed results, run once per seed.
+# Seeds used: 1337, 42, 7, 123, 2024
+# Usage: python train.py --seed <seed>   (defaults to 1337)
+parser = argparse.ArgumentParser()
+parser.add_argument("--seed", type=int, default=1337)
+SEED = parser.parse_args().seed
+set_seed(SEED)  # seeds python, numpy and torch (incl. LoRA weight initialization)
+print(f"[info] seed={SEED}")
+
 #set HF_TOKEN when you submit a job via bash
 token = os.environ.get("HF_TOKEN")
 
-output_dir = "path/to/output/dir"
+output_root = "path/to/output/dir"
+output_dir = os.path.join(output_root, f"seed_{SEED}")   # separate output folder per seed
 model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 
-os.environ["WANDB_PROJECT"] = output_dir.split("/")[-1]
+os.environ["WANDB_PROJECT"] = output_root.split("/")[-1]
 
 train_dataset = load_dataset(
     "csv",
@@ -189,6 +201,8 @@ training_args = SFTConfig(
     eval_strategy="no",
     max_length=2048,
     report_to="none",
+    seed=SEED,        # trainer seed (dropout, etc.)
+    data_seed=SEED,   # order in which training examples are shuffled
 )
 
 trainer = SFTTrainer(
