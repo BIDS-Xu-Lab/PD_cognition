@@ -21,10 +21,18 @@ warnings.filterwarnings(
     message="grad and param do not obey the gradient layout contract"
 )
 
+# Random seed: set it in the .sh job script, which passes it here as
+#   python train.py $SEED
+# To reproduce our multi-seed results, use one job per seed, with SEED set
+# to each of: 1337, 42, 7, 123, 2024 (for multi-seed performance)
+# (If no seed is passed, 1337 is used.)
+SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 1337
+
 DATA_DIR = Path("path/to/data/directory")
 TRAIN_CSV = DATA_DIR / "train.csv"
 DEV_CSV   = DATA_DIR / "dev.csv"
 OUTDIR    = Path("output")
+OUTDIR    = Path("output") / f"seed_{SEED}"   # separate output folder per seed
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
 # regex
@@ -229,7 +237,9 @@ def main():
     BATCH_SIZE = 4
     EFFECTIVE_BATCH = BATCH_SIZE
     DROPOUT = 0.1
-    random.seed(1337)
+    random.seed(SEED)
+    spacy.util.fix_random_seed(SEED)  # also seeds numpy and torch
+    print(f"[info] seed={SEED} outdir={OUTDIR}")
 
     # CPU by default; comment out to use GPU
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
