@@ -1,6 +1,7 @@
 import os
 import re
 import csv
+import sys
 import warnings
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -10,9 +11,15 @@ import spacy
 import spacy_transformers 
 from tqdm import tqdm
 
+ 
+# Seed of the trained model to run. Must match the seed used in train.py.
+# Seeds used: 1337, 42, 7, 123, 2024
+# Usage: python inference.py <seed>   (defaults to 1337)
+SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 1337
+
 TEST_CSV    = Path("/path/to/test.csv")
-MODEL_DIR   = Path("/path/to/model-best") 
-OUTDIR      = Path("/path/to/output/directory")
+MODEL_DIR   = Path("output") / f"seed_{SEED}" / "model-best"   # written by train.py
+OUTDIR      = Path("results") / f"seed_{SEED}"                 # separate results per seed
 RAW_TXT_DIR = OUTDIR / "raw_outputs"
 
 SPANS_KEY   = "sc"
